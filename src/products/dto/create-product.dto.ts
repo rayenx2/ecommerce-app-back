@@ -7,3 +7,5 @@ export class CreateProductDto {
     instantDelivery: boolean;
 
 }
+
+

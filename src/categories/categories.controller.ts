@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -23,6 +23,15 @@ export class CategoriesController {
     return this.categoriesService.findOne(+id);
   }
 
+  @Get('name/:name')
+  async getCategoryByName(@Param('name') name: string): Promise<Category[]> {
+    console.log(name);
+    if (!name) {
+      throw new NotFoundException('name parameter is required');
+    }
+    return this.categoriesService.getCategoryByName(name);
+  }
+
   @Patch(':id')
   update(@Param('id') id: number, @Body() updateCategoryDto: UpdateCategoryDto) : Promise<Category> {
     return this.categoriesService.update(id, updateCategoryDto);
@@ -36,7 +45,14 @@ export class CategoriesController {
   // }
 
   @Delete(':id')
-  remove(@Param('id') id: number): Promise<void> {
-    return this.categoriesService.remove(id);
+  async remove(@Param('id') id: number): Promise<void> {
+    try {
+      await this.categoriesService.remove(id);
+    } catch (error) {
+      if (error instanceof NotFoundException || error instanceof ConflictException) {
+        throw error; // Rethrow known exceptions to handle them in the API response
+      }
+      throw new InternalServerErrorException('An unexpected error occurred');
+    }
   }
 }

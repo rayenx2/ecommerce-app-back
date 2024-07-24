@@ -15,6 +15,9 @@ export class Order {
   @Column()
   amount: number;
 
+  @Column({ default: 'pending' }) // Default status is 'pending'
+  status: string;
+
   @ManyToMany(() => Product)
   @JoinTable()
   products: Product[];
