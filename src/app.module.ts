@@ -8,6 +8,7 @@ import { OrdersModule } from './orders/orders.module';
 import { ProductsModule } from './products/products.module';
 import { CategoriesModule } from './categories/categories.module';
 import { StatisticsModule } from './statistics/statistics.module';
+import { UsersModule } from './users/users.module';
 
 
 
@@ -22,7 +23,7 @@ import { StatisticsModule } from './statistics/statistics.module';
     //entities: [payment], 
     autoLoadEntities: true,
     synchronize: true,
-  }), CartsModule, OrdersModule, CategoriesModule, StatisticsModule],
+  }), CartsModule, OrdersModule, CategoriesModule, StatisticsModule, UsersModule],
   controllers: [AppController],
   providers: [AppService],
 })

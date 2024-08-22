@@ -1,8 +1,7 @@
 export class CreateOrderDto {
-    id: number;
     email: string;
-    userName : string;
-    amount : number;
-    productIds: number[];
-
-}
+    userName: string;
+    amount: number;
+    deliveryAddress: string;
+    products: { id: number; quantity: number }[];
+  }

@@ -1,8 +1,10 @@
-import { Controller, Post, Body, Get , Patch , Delete , Param, NotFoundException} from '@nestjs/common';
+import { Controller, Post, Body, Get , Patch , Delete , Param, NotFoundException, BadRequestException} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './entities/order.entity';
+import { OrderProduct } from './entities/order-product';
+import { UpdateOrderProductDto } from './dto/update-order-product.dto';
 
 
 @Controller('orders')
@@ -59,8 +61,45 @@ export class OrdersController {
     return updatedOrderStatus
   }
 
+
+
+  @Patch(':orderId/product/:productId/quantity')
+  async updateProductQuantity(
+    @Param('orderId') orderId: number,
+    @Param('productId') productId: number,
+    @Body() updateOrderProductDto: UpdateOrderProductDto
+  ): Promise<OrderProduct> {
+    console.log( orderId, productId)
+    return this.ordersService.updateProductQuantity(orderId, productId, updateOrderProductDto);
+  }
+
+
+  @Patch(':id/product')
+  async updateProductInOrder(
+    @Param('id') orderId: number,
+    @Body() body: { oldProductId: number, newProductId: number }
+  ): Promise<Order> {
+    const { oldProductId, newProductId } = body;
+
+    if (!oldProductId || !newProductId) {
+      throw new BadRequestException('Both oldProductId and newProductId are required');
+    }
+
+    return this.ordersService.updateProductInOrder(orderId, oldProductId, newProductId);
+  }
+
   @Delete(':id')
   deleteOrder(@Param('id') id: string): Promise<void> {
     return this.ordersService.deleteOrder(+id);
   }
-}
+
+  @Delete(':orderId/products/:productId')
+  async deleteOrderProduct(
+    @Param('orderId') orderId: number,
+    @Param('productId') productId: number
+  ): Promise<Order> {
+    return this.ordersService.deleteOrderProduct(orderId, productId);
+  }
+  
+
+  }
